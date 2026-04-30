@@ -234,53 +234,98 @@
         </div>
     </div>
 
-    <script>
-        // DOM elements
+    <script>        // DOM elements
         const addItemForm = document.getElementById('add-item-form');
         const itemsList = document.getElementById('items-list');
         const emptyState = document.getElementById('empty-state');
         const countSpan = document.getElementById('count');
-        
-        // Storage key
-        const STORAGE_KEY = 'watchlistItems';
-        
-        // Load items from localStorage
-        function loadItems() {
+
+        // API base URL
+        const API_BASE = '/api';
+
+        // Load items from API
+        async function loadItems() {
             try {
-                const items = localStorage.getItem(STORAGE_KEY);
-                return items ? JSON.parse(items) : [];
+                const response = await fetch(`${API_BASE}/items`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return await response.json();
             } catch (error) {
-                console.error('Error loading items from localStorage:', error);
-                return [];
+                console.error('Error loading items from API:', error);
+                return []; // Return empty array on error
             }
         }
-        
-        // Save items to localStorage
-        function saveItems(items) {
+
+        // Save item to API
+        async function saveItem(item) {
             try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+                if (item.id) {
+                    // Update existing item
+                    const response = await fetch(`${API_BASE}/items/${item.id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(item)
+                    });
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return await response.json();
+                } else {
+                    // Create new item
+                    const response = await fetch(`${API_BASE}/items`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(item)
+                    });
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return await response.json();
+                }
             } catch (error) {
-                console.error('Error saving items to localStorage:', error);
+                console.error('Error saving item to API:', error);
+                throw error;
             }
         }
-        
+
+        // Delete item from API
+        async function deleteItem(id) {
+            try {
+                const response = await fetch(`${API_BASE}/items/${id}`, {
+                    method: 'DELETE',
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return true;
+            } catch (error) {
+                console.error('Error deleting item from API:', error);
+                throw error;
+            }
+        }
+
         // Display items in the UI
         function displayItems(items) {
             itemsList.innerHTML = '';
-            countSpan.textContent = `${items.length} items`;
-            
+            countSpan.textContent = \`${items.length} items\`;
+
             if (items.length === 0) {
                 emptyState.style.display = 'block';
                 return;
             }
-            
+
             emptyState.style.display = 'none';
-            
+
             items.forEach(item => {
                 const itemCard = document.createElement('div');
                 itemCard.className = 'item-card';
-                
-                itemCard.innerHTML = `
+
+                itemCard.innerHTML = \`
                     <div class="item-info">
                         <div class="item-title">${item.title}</div>
                         <div class="item-meta">
@@ -293,46 +338,49 @@
                         <button class="btn-sm btn-edit" data-id="${item.id}">Edit</button>
                         <button class="btn-sm btn-delete" data-id="${item.id}">Delete</button>
                     </div>
-                `;
-                
-                itemsList.appendChild(itemCard);
-                
+                \`;
+
                 // Add event listeners to edit/delete buttons
                 const editBtn = itemCard.querySelector('.btn-edit');
                 const deleteBtn = itemCard.querySelector('.btn-delete');
-                
+
                 editBtn.addEventListener('click', () => {
                     editItem(item.id);
                 });
-                
+
                 deleteBtn.addEventListener('click', () => {
                     deleteItem(item.id);
                 });
+
+                itemsList.appendChild(itemCard);
             });
         }
-        
+
         // Add new item
-        addItemForm.addEventListener('submit', (e) => {
+        addItemForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            const title = document.getElementById('title').value;
-            const type = document.getElementById('type').value;
-            const year = document.getElementById('year').value;
-            const genre = document.getElementById('genre').value;
-            
+
+            const title = document.getElementById('title').value.trim();
+            const type = document.getElementById('type').value.trim();
+            const year = document.getElementById('year').value.trim();
+            const genre = document.getElementById('genre').value.trim();
+
+            if (!title) {
+                alert('Title is required');
+                return;
+            }
+
             const newItem = {
-                id: Date.now(), // Simple ID generation
                 title,
-                type,
+                type: type || null,
                 year: year || null,
                 genre: genre || null,
                 addedAt: new Date().toISOString()
             };
-            
+
             try {
-                const items = loadItems();
-                items.push(newItem);
-                saveItems(items);
+                const savedItem = await saveItem(newItem);
+                const items = await loadItems(); // Reload list from API
                 displayItems(items);
                 addItemForm.reset();
             } catch (error) {
@@ -340,65 +388,63 @@
                 alert('Failed to add item. Please try again.');
             }
         });
-        
+
         // Edit item
-        function editItem(id) {
-            const items = loadItems();
-            const itemIndex = items.findIndex(i => i.id === id);
-            
-            if (itemIndex === -1) return;
-            
-            const item = items[itemIndex];
-            
-            const title = prompt('Enter new title:', item.title);
-            const type = prompt('Enter new type (movie/tv):', item.type);
-            const year = prompt('Enter new year:', item.year);
-            const genre = prompt('Enter new genre:', item.genre);
-            
-            if (!title) return;
-            
+        async function editItem(id) {
             try {
+                // First, get the current item data
+                const response = await fetch(`${API_BASE}/items/${id}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const item = await response.json();
+
+                const title = prompt('Enter new title:', item.title);
+                const type = prompt('Enter new type (movie/tv):', item.type);
+                const year = prompt('Enter new year:', item.year);
+                const genre = prompt('Enter new genre:', item.genre);
+
+                if (!title === null && title.trim() === '') return; // User canceled or empty
+
                 const updatedItem = {
                     ...item,
-                    title,
-                    type: type || item.type,
-                    year: year || item.year,
-                    genre: genre || item.genre,
+                    title: title !== null ? title.trim() : item.title,
+                    type: type !== null ? type.trim() : item.type,
+                    year: year !== null ? year.trim() : item.year,
+                    genre: genre !== null ? genre.trim() : item.genre,
                     updatedAt: new Date().toISOString()
                 };
-                
-                items[itemIndex] = updatedItem;
-                saveItems(items);
+
+                await saveItem(updatedItem);
+                const items = await loadItems(); // Reload list from API
                 displayItems(items);
             } catch (error) {
                 console.error('Error updating item:', error);
                 alert('Failed to update item. Please try again.');
             }
         }
-        
+
         // Delete item
-        function deleteItem(id) {
+        async function deleteItem(id) {
             if (!confirm('Are you sure you want to delete this item?')) return;
-            
+
             try {
-                const items = loadItems();
-                const filteredItems = items.filter(i => i.id !== id);
-                saveItems(filteredItems);
-                displayItems(filteredItems);
+                await deleteItem(id);
+                const items = await loadItems(); // Reload list from API
+                displayItems(items);
             } catch (error) {
                 console.error('Error deleting item:', error);
                 alert('Failed to delete item. Please try again.');
             }
         }
-        
+
         // Initialize the app
-        function init() {
-            const items = loadItems();
+        async function init() {
+            const items = await loadItems();
             displayItems(items);
         }
-        
+
         // Start the app
-        init();
-    </script>
+        init();</script>
 </body>
 </html>
