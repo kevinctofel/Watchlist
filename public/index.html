@@ -267,6 +267,174 @@
             font-style: italic;
         }
 
+        /* Detail View Styles */
+        .detail-view {
+            display: none;
+            padding: 30px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            min-height: 400px; /* Ensure visibility during loading */
+        }
+
+        .detail-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .btn-back {
+            background-color: #95a5a6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            margin-right: 20px;
+        }
+
+        .btn-back:hover {
+            background-color: #7f8c8d;
+        }
+
+        .detail-header h1 {
+            margin: 0;
+            font-size: 2em;
+            color: #2c3e50;
+        }
+
+        .detail-content {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .detail-poster-container {
+            flex: 0 0 200px;
+        }
+
+        .detail-poster {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .detail-info {
+            flex: 1;
+        }
+
+        .detail-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .detail-meta span {
+            background-color: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.9em;
+        }
+
+        .detail-overview h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .detail-overview p {
+            line-height: 1.6;
+            color: #34495e;
+            font-size: 1.1em;
+        }
+
+        .detail-backdrop {
+            margin-top: 25px;
+        }
+
+        .detail-backdrop-img {
+            width: 100%;
+            border-radius: 8px;
+        }
+
+        .detail-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+        }
+
+        .btn-edit-detail, .btn-delete-detail {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        .btn-edit-detail {
+            background-color: #f39c12;
+            color: white;
+        }
+
+        .btn-edit-detail:hover {
+            background-color: #e67e22;
+        }
+
+        .btn-delete-detail {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .btn-delete-detail:hover {
+            background-color: #c0392b;
+        }
+
+        .detail-loading, .detail-error {
+            text-align: center;
+            padding: 60px;
+            font-size: 1.2em;
+            color: #7f8c8d;
+        }
+
+        .detail-error {
+            color: #e74c3c;
+        }
+
+        @media (max-width: 768px) {
+            .detail-content {
+                flex-direction: column;
+            }
+            
+            .detail-poster-container {
+                flex: 0 0 100%;
+            }
+            
+            .detail-poster {
+                height: 250px;
+            }
+            
+            .detail-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .btn-back {
+                margin-bottom: 15px;
+            }
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 20px;
@@ -302,6 +470,8 @@
             <div id="items-list" class="items-list">
                 <!-- Items will be populated here by JavaScript -->
             </div>
+            
+            <div id="detail-view" class="detail-view"></div>
             
             <div id="empty-state" class="empty-state">
                 Your watchlist is empty. Add your first item to get started!
@@ -340,6 +510,7 @@
         const addItemForm = document.getElementById('add-item-form');
         const itemsList = document.getElementById('items-list');
         const emptyState = document.getElementById('empty-state');
+        const detailView = document.getElementById('detail-view');
         const countSpan = document.getElementById('count');
         const addFormContainer = document.getElementById('add-form-container');
         const toggleAddFormBtn = document.getElementById('toggle-add-form');
@@ -347,6 +518,13 @@
 
         // API base URL
         const API_BASE = '/api';
+
+        // TMDB image base URL
+        const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
+
+        // Current view state
+        let currentView = 'list'; // 'list' or 'detail'
+        let detailItemId = null;
 
         // Show user-friendly error/success notifications
         function showErrorNotification(message, type = 'error') {
@@ -483,6 +661,21 @@
             }
         }
 
+        // Load a single item from API
+        async function loadItem(id) {
+            try {
+                const response = await fetch(`${API_BASE}/items/${id}`);
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status} ${response.statusText}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('Error loading item:', error);
+                showErrorNotification(`Failed to load item: ${error.message}`);
+                return null;
+            }
+        }
+
         // Save item to API with better error handling
         async function saveItem(item) {
             try {
@@ -568,16 +761,9 @@
                     </div>
                 `;
 
-                // Add event listeners to edit/delete buttons
-                const editBtn = itemCard.querySelector('.btn-edit');
-                const deleteBtn = itemCard.querySelector('.btn-delete');
-
-                editBtn.addEventListener('click', () => {
-                    editItem(item.id);
-                });
-
-                deleteBtn.addEventListener('click', () => {
-                    handleDeleteItem(item.id);
+                // Make the entire card clickable to view details
+                itemCard.addEventListener('click', () => {
+                    viewItemDetails(item.id);
                 });
 
                 itemsList.appendChild(itemCard);
@@ -719,6 +905,126 @@
         cancelAddBtn.addEventListener('click', () => {
             addFormContainer.classList.remove('visible');
             addItemForm.reset();
-        });</script>
+        });
+
+        // View item details
+        async function viewItemDetails(id) {
+            try {
+                currentView = 'detail';
+                detailItemId = id;
+                updateView();
+                
+                // Show loading state
+                detailView.innerHTML = '<div class="detail-loading">Loading item details...</div>';
+                
+                // Load item data
+                const item = await loadItem(id);
+                if (!item) {
+                    detailView.innerHTML = '<div class="detail-error">Failed to load item details.</div>';
+                    return;
+                }
+                
+                // Render detail view
+                renderDetailView(item);
+            } catch (error) {
+                console.error('Error viewing item details:', error);
+                showErrorNotification(`Failed to load item details: ${error.message}`);
+                detailView.innerHTML = '<div class="detail-error">Failed to load item details.</div>';
+            }
+        }
+
+        // Update the view based on current state
+        function updateView() {
+            if (currentView === 'list') {
+                itemsList.style.display = 'flex';
+                detailView.style.display = 'none';
+                emptyState.style.display = itemsList.children.length === 0 ? 'block' : 'none';
+                document.querySelector('.items-header h2').textContent = 'Watchlist Items';
+            } else if (currentView === 'detail') {
+                itemsList.style.display = 'none';
+                emptyState.style.display = 'none';
+                detailView.style.display = 'block';
+            }
+        }
+
+        // Render the detail view for an item
+        function renderDetailView(item) {
+            // Build poster URL if available
+            const posterUrl = item.poster_path 
+                ? `${TMDB_IMAGE_BASE_URL}${item.poster_path}` 
+                : 'https://via.placeholder.com/500x750?text=No+Poster';
+            
+            // Format release date
+            const releaseDate = item.release_date ? new Date(item.release_date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            }) : 'N/A';
+            
+            // Format vote average
+            const voteAverage = item.vote_average !== null && item.vote_average !== undefined 
+                ? `${item.vote_average.toFixed(1)}/10` 
+                : 'N/A';
+            
+            detailView.innerHTML = `
+                <div class="detail-header">
+                    <button id="back-to-list" class="btn-back">← Back to Watchlist</button>
+                    <h1>${item.title}</h1>
+                </div>
+                
+                <div class="detail-content">
+                    <div class="detail-poster-container">
+                        <img src="${posterUrl}" alt="${item.title} poster" class="detail-poster">
+                    </div>
+                    
+                    <div class="detail-info">
+                        <div class="detail-meta">
+                            <span><strong>Type:</strong> ${item.type}</span>
+                            <span><strong>Year:</strong> ${item.year || 'N/A'}</span>
+                            <span><strong>Genre:</strong> ${item.genre || 'N/A'}</span>
+                            <span><strong>Released:</strong> ${releaseDate}</span>
+                            <span><strong>Rating:</strong> ${voteAverage}</span>
+                        </div>
+                        
+                        ${item.overview ? `
+                        <div class="detail-overview">
+                            <h2>Overview</h2>
+                            <p>${item.overview}</p>
+                        </div>` : ''}
+                        
+                        ${item.backdrop_path ? `
+                        <div class="detail-backdrop">
+                            <img src="${TMDB_IMAGE_BASE_URL}${item.backdrop_path}" alt="${item.title} backdrop" class="detail-backdrop-img">
+                        </div>` : ''}
+                    </div>
+                </div>
+                
+                <div class="detail-actions">
+                    <button id="edit-item-btn" class="btn-edit-detail">Edit Item</button>
+                    <button id="delete-item-btn" class="btn-delete-detail">Delete Item</button>
+                </div>
+            `;
+            
+            // Add event listeners
+            document.getElementById('back-to-list').addEventListener('click', () => {
+                currentView = 'list';
+                detailItemId = null;
+                updateView();
+            });
+            
+            document.getElementById('edit-item-btn').addEventListener('click', () => {
+                editItem(item.id);
+            });
+            
+            document.getElementById('delete-item-btn').addEventListener('click', () => {
+                if (confirm(`Are you sure you want to delete "${item.title}"?`)) {
+                    handleDeleteItem(item.id);
+                }
+            });
+        }
+
+        // Modify the item card click handler to open detail view instead of edit/delete
+        // We need to replace the existing click handlers in displayItems function
+        // Let's find and replace that section</script>
 </body>
 </html>

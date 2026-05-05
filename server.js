@@ -60,15 +60,15 @@ async function fetchTMDBMetadata(title, type, year) {
       year: year || undefined,
       type: type === 'movie' ? 'movie' : 'tv'
     });
-    
+
     const searchResponse = await axios.get(`${TMDB_BASE_URL}/search/${type === 'movie' ? 'movie' : 'tv'}?${searchParams}`);
-    
+
     if (searchResponse.data.results && searchResponse.data.results.length > 0) {
       const result = searchResponse.data.results[0];
-      
+
       // Get detailed information for better metadata
       const detailResponse = await axios.get(`${TMDB_BASE_URL}/${type === 'movie' ? 'movie' : 'tv'}/${result.id}?api_key=${TMDB_API_KEY}`);
-      
+
       return {
         poster_path: detailResponse.data.poster_path,
         backdrop_path: detailResponse.data.backdrop_path,
@@ -78,7 +78,7 @@ async function fetchTMDBMetadata(title, type, year) {
         tmdb_id: result.id
       };
     }
-    
+
     return null;
   } catch (error) {
     console.error('Error fetching TMDB metadata:', error.message);
@@ -167,9 +167,14 @@ app.delete('/api/items/:id', (req, res) => {
   res.status(204).send();
 });
 
-// Serve the frontend index.html
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// Fallback to serve index.html for client-side routing (non-API routes)
+app.use((req, res, next) => {
+  if (!req.path.startsWith('/api/')) {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  } else {
+    // If it's an API route but not matched, send 404
+    res.status(404).send('Not Found');
+  }
 });
 
 // Start server

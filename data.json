@@ -4,7 +4,7 @@
     "title": "Inception",
     "type": "movie",
     "year": "2010",
-    "genre": "Sci-Fi, Thriller",
+    "genre": "Sci-Fi, Thriller, Drama",
     "addedAt": "2026-05-05T16:45:53.404Z",
     "poster_path": "/xlaY2zyzMfkhk0HSC5VUwzoZPU1.jpg",
     "backdrop_path": "/8ZTVqvKDQ8emSGUEMjsS4yHAwrp.jpg",
@@ -12,7 +12,7 @@
     "release_date": "2010-07-15",
     "vote_average": 8.372,
     "tmdb_id": 27205,
-    "updatedAt": "2026-05-05T16:46:59.025Z"
+    "updatedAt": "2026-05-05T17:31:45.542Z"
   },
   {
     "id": 1777999601461,
@@ -21,20 +21,6 @@
     "year": "1999",
     "genre": "Sci-Fi",
     "addedAt": "2026-05-05T16:46:41.461Z",
-    "poster_path": "/aOIuZAjPaRIE6CMzbazvcHuHXDc.jpg",
-    "backdrop_path": "/tlm8UkiQsitc8rSuIAscQDCnP8d.jpg",
-    "overview": "Set in the 22nd century, The Matrix tells the story of a computer hacker who joins a group of underground insurgents fighting the vast and powerful computers who now rule the earth.",
-    "release_date": "1999-03-31",
-    "vote_average": 8.243,
-    "tmdb_id": 603
-  },
-  {
-    "id": 1777999737791,
-    "title": "The Matrix",
-    "type": "movie",
-    "year": null,
-    "genre": null,
-    "addedAt": "2026-05-05T16:48:57.791Z",
     "poster_path": "/aOIuZAjPaRIE6CMzbazvcHuHXDc.jpg",
     "backdrop_path": "/tlm8UkiQsitc8rSuIAscQDCnP8d.jpg",
     "overview": "Set in the 22nd century, The Matrix tells the story of a computer hacker who joins a group of underground insurgents fighting the vast and powerful computers who now rule the earth.",
@@ -83,5 +69,33 @@
     "release_date": "2019-11-12",
     "vote_average": 8.406,
     "tmdb_id": 82856
+  },
+  {
+    "id": 1778001142243,
+    "title": "Landman",
+    "type": "tv",
+    "year": null,
+    "genre": null,
+    "addedAt": "2026-05-05T17:12:22.243Z",
+    "poster_path": "/hYthRgS1nvQkGILn9YmqsF8kSk6.jpg",
+    "backdrop_path": "/mh2UczqEXJJVgqohbyZbHTuxwhL.jpg",
+    "overview": "Set in the proverbial boomtowns of West-Texas and a modern-day tale of fortune-seeking in the world of oil rigs, the series is an upstairs/downstairs story of roughnecks and wildcat billionaires that are fueling a boom so big it’s reshaping our climate, our economy and our geopolitics.",
+    "release_date": "2024-11-17",
+    "vote_average": 8.025,
+    "tmdb_id": 157741
+  },
+  {
+    "id": 1778002231544,
+    "title": "Parasite",
+    "type": "movie",
+    "year": "2019",
+    "genre": "Thriller",
+    "addedAt": "2026-05-05T17:30:31.544Z",
+    "poster_path": "/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg",
+    "backdrop_path": "/TU9NIjwzjoKPwQHoHshkFcQUCG.jpg",
+    "overview": "All unemployed, Ki-taek's family takes peculiar interest in the wealthy and glamorous Parks for their livelihood until they get entangled in an unexpected incident.",
+    "release_date": "2019-05-30",
+    "vote_average": 8.494,
+    "tmdb_id": 496243
   }
 ]
