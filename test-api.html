@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+</head>
+<body>
+    <h1>API Test</h1>
+    <button id="testGet">Test GET /api/items</button>
+    <button id="testPost">Test POST /api/items</button>
+    <div id="output"></div>
+
+    <script>
+        const API_BASE = '/api';
+        
+        document.getElementById('testGet').addEventListener('click', async () => {
+            const output = document.getElementById('output');
+            output.innerHTML = 'Loading...';
+            try {
+                const response = await fetch(`${API_BASE}/items`);
+                const data = await response.json();
+                output.innerHTML = `<pre>GET Response: ${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                output.innerHTML = `<pre>Error: ${error.message}</pre>`;
+                console.error('GET error:', error);
+            }
+        });
+        
+        document.getElementById('testPost').addEventListener('click', async () => {
+            const output = document.getElementById('output');
+            output.innerHTML = 'Posting...';
+            try {
+                const response = await fetch(`${API_BASE}/items`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        title: 'Test from HTML',
+                        type: 'movie',
+                        year: '2023',
+                        genre: 'Test'
+                    })
+                });
+                const data = await response.json();
+                output.innerHTML = `<pre>POST Response: ${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                output.innerHTML = `<pre>Error: ${error.message}</pre>`;
+                console.error('POST error:', error);
+            }
+        });
+    </script>
+</body>
+</html>
