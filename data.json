@@ -23,5 +23,21 @@
     "year": null,
     "genre": null,
     "addedAt": "2026-05-05T15:53:58.358Z"
+  },
+  {
+    "id": 1777997576554,
+    "title": "Mandolorian",
+    "type": "tv",
+    "year": "2024",
+    "genre": null,
+    "addedAt": "2026-05-05T16:12:56.554Z"
+  },
+  {
+    "id": 1777997778628,
+    "title": "test",
+    "type": "movie",
+    "year": null,
+    "genre": null,
+    "addedAt": "2026-05-05T16:16:18.628Z"
   }
 ]

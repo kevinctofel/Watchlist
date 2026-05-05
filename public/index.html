@@ -563,6 +563,8 @@
                 displayItems(items);
                 addItemForm.reset();
                 showErrorNotification('Item added successfully!', 'success');
+                // Hide the form after successful addition
+                addFormContainer.classList.remove('visible');
             } catch (error) {
                 console.error('Error adding item:', error);
                 // Error already shown by saveItem/loadItem via thrown error
