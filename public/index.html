@@ -113,66 +113,102 @@
         
         .items-list {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
+            flex-wrap: wrap;
             gap: 15px;
+            justify-content: flex-start;
         }
         
         .item-card {
             background-color: #f8f9fa;
-            padding: 20px;
             border-radius: 10px;
             border-left: 4px solid #3498db;
             transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 15px;
+            height: 260px; /* Fixed height for uniform cards */
+            width: 120px; /* Fixed width for card-like feel */
+            margin: 0 10px 20px 0; /* Space between cards */
+            overflow: hidden;
         }
         
         .item-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
         }
-        
-        .item-info {
+
+        .item-poster {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 8px;
             margin-bottom: 10px;
         }
-        
+
+        .item-info {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
         .item-title {
-            font-size: 1.3em;
+            font-size: 1.1em;
             font-weight: 600;
             color: #2c3e50;
             margin-bottom: 5px;
+            line-height: 1.3;
+            min-height: 2.6em; /* Space for 2 lines */
         }
-        
+
         .item-meta {
-            font-size: 0.9em;
+            font-size: 0.8em;
             color: #7f8c8d;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+            flex-grow: 1;
         }
-        
+
+        .item-overview {
+            font-size: 0.75em;
+            color: #95a5a6;
+            line-height: 1.3;
+            margin-bottom: 10px;
+            flex-grow: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
         .item-actions {
             display: flex;
-            gap: 10px;
+            gap: 8px;
+            margin-top: auto;
         }
-        
+
         .btn-sm {
-            padding: 8px 16px;
-            font-size: 0.9em;
+            padding: 6px 12px;
+            font-size: 0.8em;
         }
-        
+
         .btn-edit {
             background-color: #f39c12;
         }
-        
+
         .btn-edit:hover {
             background-color: #e67e22;
         }
-        
+
         .btn-delete {
             background-color: #e74c3c;
         }
-        
+
         .btn-delete:hover {
             background-color: #c0392b;
         }
-        
+
         /* Toggle button styles */
         .btn-toggle {
             background-color: #2ecc71;
@@ -186,11 +222,11 @@
             transition: background-color 0.3s;
             margin-left: 10px;
         }
-        
+
         .btn-toggle:hover {
             background-color: #27ae60;
         }
-        
+
         .btn-cancel {
             background-color: #95a5a6;
             color: white;
@@ -203,45 +239,49 @@
             transition: background-color 0.3s;
             margin-left: 10px;
         }
-        
+
         .btn-cancel:hover {
             background-color: #7f8c8d;
         }
-        
+
         /* Initially hide the add form */
         #add-form-container {
             display: none;
             animation: slideDown 0.3s ease-out;
         }
-        
+
         /* Show the add form when it has the 'visible' class */
         #add-form-container.visible {
             display: block;
         }
-        
+
         @keyframes slideDown {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
+
         .empty-state {
             text-align: center;
             padding: 40px;
             color: #7f8c8d;
             font-style: italic;
         }
-        
+
         @media (max-width: 768px) {
             .container {
                 padding: 20px;
             }
-            
+
             h1 {
                 font-size: 1.8em;
             }
-            
+
             .add-form, .items-container {
                 padding: 20px;
+            }
+            
+            .items-list {
+                justify-content: center;
             }
         }
     </style>
@@ -505,7 +545,14 @@
                 const itemCard = document.createElement('div');
                 itemCard.className = 'item-card';
 
+                // Build poster URL if available
+                const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
+                const posterUrl = item.poster_path 
+                    ? `${TMDB_IMAGE_BASE_URL}${item.poster_path}` 
+                    : 'https://via.placeholder.com/120x180?text=No+Poster';
+
                 itemCard.innerHTML = `
+                    <img src="${posterUrl}" alt="${item.title} poster" class="item-poster">
                     <div class="item-info">
                         <div class="item-title">${item.title}</div>
                         <div class="item-meta">
@@ -513,6 +560,7 @@
                             <span>Year: ${item.year || 'N/A'}</span> • 
                             <span>Genre: ${item.genre || 'N/A'}</span>
                         </div>
+                        ${item.overview ? `<div class="item-overview">${item.overview.substring(0, 100)}...</div>` : ''}
                     </div>
                     <div class="item-actions">
                         <button class="btn-sm btn-edit" data-id="${item.id}">Edit</button>
@@ -596,7 +644,7 @@
                 const year = prompt('Enter new year:', item.year);
                 const genre = prompt('Enter new genre:', item.genre);
 
-                if (!title === null && title.trim() === '') return; // User canceled or empty
+                if (title === null || title.trim() === '') return; // User canceled or empty
 
                 const updatedItem = {
                     ...item,

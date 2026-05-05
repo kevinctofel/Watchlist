@@ -3,14 +3,10 @@ const express = require('express');
 const path = require('path');
 const cors = require('cors');
 const fs = require('fs');
-const axios = require('axios');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const DATA_FILE = path.join(__dirname, 'data.json');
-const TMDB_API_KEY = 'aeee659edaaa6cd1b4906c4b70a856a8';
-const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
-const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 
 // Middleware
 app.use(cors());
@@ -50,55 +46,16 @@ function saveData() {
 // Initialize data on startup
 loadData();
 
-// TMDB API helper function
-async function fetchTMDBMetadata(title, type, year) {
-  try {
-    // Search for the title on TMDB
-    const searchParams = new URLSearchParams({
-      api_key: TMDB_API_KEY,
-      query: title,
-      year: year || undefined,
-      type: type === 'movie' ? 'movie' : 'tv'
-    });
-    
-    const searchResponse = await axios.get(`${TMDB_BASE_URL}/search/${type === 'movie' ? 'movie' : 'tv'}?${searchParams}`);
-    
-    if (searchResponse.data.results && searchResponse.data.results.length > 0) {
-      const result = searchResponse.data.results[0];
-      
-      // Get detailed information for better metadata
-      const detailResponse = await axios.get(`${TMDB_BASE_URL}/${type === 'movie' ? 'movie' : 'tv'}/${result.id}?api_key=${TMDB_API_KEY}`);
-      
-      return {
-        poster_path: detailResponse.data.poster_path,
-        backdrop_path: detailResponse.data.backdrop_path,
-        overview: detailResponse.data.overview,
-        release_date: detailResponse.data.release_date || detailResponse.data.first_air_date,
-        vote_average: detailResponse.data.vote_average,
-        tmdb_id: result.id
-      };
-    }
-    
-    return null;
-  } catch (error) {
-    console.error('Error fetching TMDB metadata:', error.message);
-    return null;
-  }
-}
-
 // API routes
 app.get('/api/items', (req, res) => {
   res.json(items);
 });
 
-app.post('/api/items', async (req, res) => {
+app.post('/api/items', (req, res) => {
   const { title, type, year, genre } = req.body;
   if (!title) {
     return res.status(400).json({ error: 'Title is required' });
   }
-
-  // Fetch TMDB metadata
-  const tmdbMetadata = await fetchTMDBMetadata(title, type, year);
 
   const newItem = {
     id: Date.now(),
@@ -106,8 +63,7 @@ app.post('/api/items', async (req, res) => {
     type,
     year,
     genre,
-    addedAt: new Date().toISOString(),
-    ...tmdbMetadata // Add poster_path, overview, etc. if found
+    addedAt: new Date().toISOString()
   };
 
   items.push(newItem);
@@ -123,33 +79,17 @@ app.get('/api/items/:id', (req, res) => {
   res.json(item);
 });
 
-app.put('/api/items/:id', async (req, res) => {
+app.put('/api/items/:id', (req, res) => {
   const item = items.find(i => i.id === parseInt(req.params.id));
   if (!item) {
     return res.status(404).json({ error: 'Item not found' });
   }
 
   const { title, type, year, genre } = req.body;
-  
-  // Fetch TMDB metadata if title, type, or year changed
-  const shouldFetchTMDB = title !== undefined || type !== undefined || year !== undefined;
-  let tmdbMetadata = {};
-  
-  if (shouldFetchTMDB) {
-    const fetchTitle = title !== undefined ? title : item.title;
-    const fetchType = type !== undefined ? type : item.type;
-    const fetchYear = year !== undefined ? year : item.year;
-    
-    tmdbMetadata = await fetchTMDBMetadata(fetchTitle, fetchType, fetchYear) || {};
-  }
-
-  if (title !== undefined) item.title = title;
-  if (type !== undefined) item.type = type;
-  if (year !== undefined) item.year = year;
-  if (genre !== undefined) item.genre = genre;
-  
-  // Update TMDB metadata if fetched
-  Object.assign(item, tmdbMetadata);
+  if (title) item.title = title;
+  if (type) item.type = type;
+  if (year) item.year = year;
+  if (genre) item.genre = genre;
   item.updatedAt = new Date().toISOString();
 
   saveData(); // Persist the change
