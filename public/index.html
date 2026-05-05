@@ -166,6 +166,57 @@
             background-color: #c0392b;
         }
         
+        /* Toggle button styles */
+        .btn-toggle {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            margin-left: 10px;
+        }
+        
+        .btn-toggle:hover {
+            background-color: #27ae60;
+        }
+        
+        .btn-cancel {
+            background-color: #95a5a6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            margin-left: 10px;
+        }
+        
+        .btn-cancel:hover {
+            background-color: #7f8c8d;
+        }
+        
+        /* Initially hide the add form */
+        #add-form-container {
+            display: none;
+            animation: slideDown 0.3s ease-out;
+        }
+        
+        /* Show the add form when it has the 'visible' class */
+        #add-form-container.visible {
+            display: block;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
         .empty-state {
             text-align: center;
             padding: 40px;
@@ -192,7 +243,25 @@
     <div class="container">
         <h1>📺 TV & Movie Watchlist</h1>
         
-        <div class="add-form">
+        <div class="items-container">
+            <div class="items-header">
+                <h2>Watchlist Items</h2>
+                <div class="header-actions">
+                    <span id="count">0 items</span>
+                    <button id="toggle-add-form" class="btn-toggle">+ Add Item</button>
+                </div>
+            </div>
+            
+            <div id="items-list" class="items-list">
+                <!-- Items will be populated here by JavaScript -->
+            </div>
+            
+            <div id="empty-state" class="empty-state">
+                Your watchlist is empty. Add your first item to get started!
+            </div>
+        </div>
+        
+        <div class="add-form" id="add-form-container">
             <h2>Add New Item</h2>
             <form id="add-item-form">
                 <div class="form-group">
@@ -215,22 +284,8 @@
                     <input type="text" id="genre" name="genre">
                 </div>
                 <button type="submit">Add to Watchlist</button>
+                <button type="button" id="cancel-add-btn" class="btn-cancel">Cancel</button>
             </form>
-        </div>
-        
-        <div class="items-container">
-            <div class="items-header">
-                <h2>Watchlist Items</h2>
-                <span id="count">0 items</span>
-            </div>
-            
-            <div id="items-list" class="items-list">
-                <!-- Items will be populated here by JavaScript -->
-            </div>
-            
-            <div id="empty-state" class="empty-state">
-                Your watchlist is empty. Add your first item to get started!
-            </div>
         </div>
     </div>
 
@@ -239,6 +294,9 @@
         const itemsList = document.getElementById('items-list');
         const emptyState = document.getElementById('empty-state');
         const countSpan = document.getElementById('count');
+        const addFormContainer = document.getElementById('add-form-container');
+        const toggleAddFormBtn = document.getElementById('toggle-add-form');
+        const cancelAddBtn = document.getElementById('cancel-add-btn');
 
         // API base URL
         const API_BASE = '/api';
@@ -589,6 +647,21 @@
         }
 
         // Start the app
-        init();</script>
+        init();
+        
+        // Toggle add form visibility
+        toggleAddFormBtn.addEventListener('click', () => {
+            addFormContainer.classList.toggle('visible');
+            // Focus on title input when showing the form
+            if (addFormContainer.classList.contains('visible')) {
+                document.getElementById('title').focus();
+            }
+        });
+        
+        // Cancel adding item
+        cancelAddBtn.addEventListener('click', () => {
+            addFormContainer.classList.remove('visible');
+            addItemForm.reset();
+        });</script>
 </body>
 </html>
