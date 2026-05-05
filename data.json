@@ -43,20 +43,6 @@
     "tmdb_id": 11
   },
   {
-    "id": 1777999878876,
-    "title": "test",
-    "type": "movie",
-    "year": null,
-    "genre": null,
-    "addedAt": "2026-05-05T16:51:18.876Z",
-    "poster_path": "/tTWRomgIMOoIB3CJLPlVbqSawEm.jpg",
-    "backdrop_path": "/xySCWwZVuU03xOsJfs1Qk8yG2DF.jpg",
-    "overview": "San Francisco, 1985. Two opposites attract at a modern dance company. Together, their courage and resilience are tested as they navigate a world full of risks and promise, against the backdrop of a disease no one seems to know anything about.",
-    "release_date": "2013-06-29",
-    "vote_average": 6.724,
-    "tmdb_id": 226979
-  },
-  {
     "id": 1778000104650,
     "title": "The Mandalorian",
     "type": "tv",
@@ -97,5 +83,19 @@
     "release_date": "2019-05-30",
     "vote_average": 8.494,
     "tmdb_id": 496243
+  },
+  {
+    "id": 1778013580256,
+    "title": "Seinfeld",
+    "type": "tv",
+    "year": "1989",
+    "genre": "35",
+    "addedAt": "2026-05-05T20:39:40.256Z",
+    "poster_path": "/aCw8ONfyz3AhngVQa1E2Ss4KSUQ.jpg",
+    "backdrop_path": "/tMRdEsMg9MyXAkcufK9YJEeIaNW.jpg",
+    "overview": "A stand-up comedian and his three offbeat friends weather the pitfalls and payoffs of life in New York City in the '90s. It's a show about nothing.",
+    "release_date": "1989-07-05",
+    "vote_average": 8.259,
+    "tmdb_id": 1400
   }
 ]

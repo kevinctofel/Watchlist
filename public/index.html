@@ -48,6 +48,7 @@
         
         .form-group {
             margin-bottom: 15px;
+            position: relative;
         }
         
         label {
@@ -276,11 +277,35 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             min-height: 400px; /* Ensure visibility during loading */
         }
++        .suggestions {
++            position: absolute;
++            background: white;
++            border: 1px solid #ddd;
++            max-height: 200px;
++            overflow-y: auto;
++            width: 100%;
++            box-sizing: border-box;
++            z-index: 10;
++        }
++        .suggestions li {
++            padding: 8px;
++            cursor: pointer;
++        }
++        .suggestions li:hover {
++            background: #f0f0f0;
++        }
++        .poster-preview {
++            margin-top: 8px;
++        }
++        .poster-preview img {
++            max-width: 120px;
++            border-radius: 6px;
++        }
+         .detail-header {
+             display: flex;
+             align-items: center;
+             margin-bottom: 30px;
 
-        .detail-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 30px;
             padding-bottom: 20px;
             border-bottom: 1px solid #eee;
         }
@@ -412,6 +437,22 @@
             color: #e74c3c;
         }
 
+        .footer {
+            text-align: center;
+            padding: 40px 0 20px 0;
+            color: #7f8c8d;
+            font-size: 0.85em;
+        }
+        
+        .footer a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
         @media (max-width: 768px) {
             .detail-content {
                 flex-direction: column;
@@ -435,6 +476,22 @@
             }
         }
 
+        .footer {
+            text-align: center;
+            padding: 40px 0 20px 0;
+            color: #7f8c8d;
+            font-size: 0.85em;
+        }
+        
+        .footer a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 20px;
@@ -451,6 +508,18 @@
             .items-list {
                 justify-content: center;
             }
+        }
+            .suggestions {
+            position: absolute;
+            left: 0;
+            top: 100%;
+            background: white;
+            border: 1px solid #ddd;
+            max-height: 200px;
+            overflow-y: auto;
+            width: 100%;
+            box-sizing: border-box;
+            z-index: 10;
         }
     </style>
 </head>
@@ -469,28 +538,29 @@
             
             <div id="items-list" class="items-list">
                 <!-- Items will be populated here by JavaScript -->
-            </div>
-            
-            <div id="detail-view" class="detail-view"></div>
-            
-            <div id="empty-state" class="empty-state">
-                Your watchlist is empty. Add your first item to get started!
-            </div>
-        </div>
-        
-        <div class="add-form" id="add-form-container">
-            <h2>Add New Item</h2>
+</div>
+
+    
+
+
+    <div id="empty-state" class="empty-state">Your watchlist is empty. Add your first item to get started!</div>
+
+            <div class="add-form" id="add-form-container">
+<h2>Add New Item</h2>
             <form id="add-item-form">
                 <div class="form-group">
                     <label for="title">Title</label>
                     <input type="text" id="title" name="title" required>
+                <button type="button" id="search-btn" class="btn-search" title="Search TMDB">🔍</button>
+                <input type="hidden" id="tmdb_id" name="tmdb_id">
                 </div>
                 <div class="form-group">
-                    <label for="type">Type</label>
+                <div id="tmdb-suggestions" class="suggestions"></div>
                     <select id="type" name="type" required>
                         <option value="movie">Movie</option>
                         <option value="tv">TV Show</option>
                     </select>
+                <div id="tmdb-poster-preview" class="poster-preview"></div>
                 </div>
                 <div class="form-group">
                     <label for="year">Year</label>
@@ -506,7 +576,8 @@
         </div>
     </div>
 
-    <script>        // DOM elements
+    <div id="detail-view" class="detail-view"></div>
+    <script>
         const addItemForm = document.getElementById('add-item-form');
         const itemsList = document.getElementById('items-list');
         const emptyState = document.getElementById('empty-state');
@@ -893,6 +964,63 @@
         init();
         
         // Toggle add form visibility
+function debounce(fn, delay) {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => fn(...args), delay);
+  };
+}
+const TMDB_API_KEY = 'aeee659edaaa6cd1b4906c4b70a856a8';
+const TMDB_BASE = 'https://api.themoviedb.org/3';
+const tmdbSearch = async (q, type = 'movie') => {
+  const url = `${TMDB_BASE}/search/${type}?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(q)}`;
+  const res = await fetch(url);
+  return res.ok ? (await res.json()).results : [];
+};
+const showSuggestions = results => {
+  const suggDiv = document.getElementById('tmdb-suggestions');
+  suggDiv.innerHTML = '';
+  results.slice(0,5).forEach(r => {
+    const li = document.createElement('li');
+    li.textContent = `${r.title ?? r.name} (${r.release_date?.slice(0,4) ?? r.first_air_date?.slice(0,4) ?? ''})`;
+    li.dataset.id = r.id;
+    li.dataset.media = r.media_type;
+    li.onclick = () => selectTMDBResult(r);
+    suggDiv.appendChild(li);
+  });
+  suggDiv.style.display = results.length ? 'block' : 'none';
+};
+const selectTMDBResult = r => {
+  document.getElementById('title').value = r.title ?? r.name;
+  document.getElementById('tmdb_id').value = r.id;
+  document.getElementById('type').value = r.media_type;
+  document.getElementById('year').value = r.release_date?.slice(0,4) ?? r.first_air_date?.slice(0,4) ?? '';
+  document.getElementById('genre').value = r.genre_ids?.join(', ') ?? '';
+  document.getElementById('overview').value = r.overview ?? '';
+  document.getElementById('poster_path').value = r.poster_path ?? '';
+  const preview = document.getElementById('tmdb-poster-preview');
+  preview.innerHTML = r.poster_path ? `<img src="https://image.tmdb.org/t/p/w200${r.poster_path}" alt="${r.title ?? r.name} poster">` : '';
+  document.getElementById('tmdb-suggestions').style.display = 'none';
+};
+const searchDebounced = debounce(async ev => {
+  const q = ev.target.value;
+  if (q.length < 3) { document.getElementById('tmdb-suggestions').style.display = 'none'; return; }
+  const type = document.getElementById('type').value;
+  const results = await tmdbSearch(q, type);
+  showSuggestions(results);
+}, 400);
+document.getElementById('title').addEventListener('input', searchDebounced);
+document.getElementById('type').addEventListener('change', () => {
+  const ev = { target: { value: document.getElementById('title').value } };
+  searchDebounced(ev);
+});
+document.getElementById('search-btn').addEventListener('click', (e) => {
+  e.preventDefault();
+  const titleVal = document.getElementById('title').value;
+  if (!titleVal) return;
+  searchDebounced({ target: { value: titleVal } });
+});
         toggleAddFormBtn.addEventListener('click', () => {
             addFormContainer.classList.toggle('visible');
             // Focus on title input when showing the form
@@ -1023,8 +1151,10 @@
             });
         }
 
-        // Modify the item card click handler to open detail view instead of edit/delete
+// Modify the item card click handler to open detail view instead of edit/delete
         // We need to replace the existing click handlers in displayItems function
-        // Let's find and replace that section</script>
+        // Let's find and replace that section
+
+</script>
+<footer class="footer">Data from <a href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer">TMDB</a></footer>
 </body>
-</html>
