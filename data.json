@@ -1,20 +1,5 @@
 [
   {
-    "id": 1777999553404,
-    "title": "Inception",
-    "type": "movie",
-    "year": "2010",
-    "genre": "Sci-Fi, Thriller, Drama",
-    "addedAt": "2026-05-05T16:45:53.404Z",
-    "poster_path": "/xlaY2zyzMfkhk0HSC5VUwzoZPU1.jpg",
-    "backdrop_path": "/8ZTVqvKDQ8emSGUEMjsS4yHAwrp.jpg",
-    "overview": "Cobb, a skilled thief who commits corporate espionage by infiltrating the subconscious of his targets is offered a chance to regain his old life as payment for a task considered to be impossible: \"inception\", the implantation of another person's idea into a target's subconscious.",
-    "release_date": "2010-07-15",
-    "vote_average": 8.372,
-    "tmdb_id": 27205,
-    "updatedAt": "2026-05-05T17:31:45.542Z"
-  },
-  {
     "id": 1777999601461,
     "title": "The Matrix",
     "type": "movie",
@@ -127,12 +112,12 @@
     "tmdb_id": 80274
   },
   {
-    "id": 1778429576028,
+    "id": 1778446054179,
     "title": "Interstellar",
     "type": "movie",
     "year": "2014",
     "genre": null,
-    "addedAt": "2026-05-10T16:12:56.028Z",
+    "addedAt": "2026-05-10T20:47:34.179Z",
     "poster_path": "/yQvGrMoipbRoddT0ZR8tPoR7NfX.jpg",
     "backdrop_path": "/2ssWTSVklAEc98frZUQhgtGHx7s.jpg",
     "overview": "The adventures of a group of explorers who make use of a newly discovered wormhole to surpass the limitations on human space travel and conquer the vast distances involved in an interstellar voyage.",
@@ -141,17 +126,17 @@
     "tmdb_id": 157336
   },
   {
-    "id": 1778434698127,
-    "title": "INTERSTICE",
-    "type": "movie",
-    "year": "2022",
+    "id": 1778446757733,
+    "title": "Little House on the Prairie",
+    "type": "tv",
+    "year": "1974",
     "genre": null,
-    "addedAt": "2026-05-10T17:38:18.127Z",
-    "poster_path": "/doQqQM51mezvpGF5tr6SFyoxqOr.jpg",
-    "backdrop_path": "/6Y4GfuTONKnO2e7g90G7UTnJeDE.jpg",
-    "overview": "Two years after the tragic death of Zack Lorenzo's best friend, Andrew Ridge, Zack attends a magician show. During the spectacle, Zack becomes part of the show, and the Magician conjures a tremendous shift in Zack's perspective on the horrific incident of his past.",
-    "release_date": "2022-12-16",
-    "vote_average": 0,
-    "tmdb_id": 1064497
+    "addedAt": "2026-05-10T20:59:17.733Z",
+    "poster_path": "/eVpvlqKZfEVsBOttNFTUyfPoA6K.jpg",
+    "backdrop_path": "/uCvpgfY4oTeZxEcFqm1ATJkDDmu.jpg",
+    "overview": "When the big woods of Wisconsin becomes a difficult spot for hunting, Charles Ingalls reluctantly decides to move his family, pioneering west. Their life on the farm in Walnut Grove, Minnesota, in the 1870s and 1880s is full of adventure, tragedy, and triumph. Based on the books of Laura Ingalls Wilder.",
+    "release_date": "1974-09-11",
+    "vote_average": 7.917,
+    "tmdb_id": 1781
   }
 ]

@@ -838,7 +838,22 @@
                 });
 
                 itemsList.appendChild(itemCard);
-            });
+            // Attach button listeners to stop propagation from card click
+            const delBtn = itemCard.querySelector('.btn-delete');
+            if (delBtn) {
+                delBtn.addEventListener('click', e => {
+                    e.stopPropagation();
+                    handleDeleteItem(item.id);
+                });
+            }
+            const editBtn = itemCard.querySelector('.btn-edit');
+            if (editBtn) {
+                editBtn.addEventListener('click', e => {
+                    e.stopPropagation();
+                    editItem(item.id);
+                });
+            }
+        });
         }
 
         // Add new item with better error handling
@@ -927,6 +942,12 @@
             try {
                 await deleteItem(id);
                 const items = await loadItems(); // Reload list from API
+                // If we were viewing details, switch back to list view
+                if (currentView === 'detail') {
+                    currentView = 'list';
+                    detailItemId = null;
+                    updateView();
+                }
                 displayItems(items);
             } catch (error) {
                 console.error('Error deleting item:', error);
@@ -1131,7 +1152,8 @@ const showSuggestions = results => {
                 editItem(item.id);
             });
             
-            document.getElementById('delete-item-btn').addEventListener('click', () => {
+            document.getElementById('delete-item-btn').addEventListener('click', e => {
+                e.stopPropagation();
                 if (confirm(`Are you sure you want to delete "${item.title}"?`)) {
                     handleDeleteItem(item.id);
                 }
