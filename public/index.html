@@ -553,21 +553,21 @@
             <div class="add-form" id="add-form-container">
 <h2>Add New Item</h2>
             <form id="add-item-form">
-                <div class="form-group">
-                    <label for="title">Title</label>
-                    <input type="text" id="title" name="title" required>
-                    <button type="button" id="search-btn" class="btn-search" title="Search TMDB">🔍</button>
-                    <input type="hidden" id="tmdb_year" name="tmdb_year" value="">
-                    <input type="hidden" id="tmdb_genre" name="tmdb_genre" value="">
+            <div class="form-group">
+                <label>Type</label>
+                <div class="radio-group" style="display:flex;gap:10px;">
+                    <label><input type="radio" name="type" value="movie" checked> Movie</label>
+                    <label><input type="radio" name="type" value="tv"> TV Show</label>
                 </div>
-                <div class="form-group">
-                    <label>Type</label>
-                    <div class="radio-group" style="display:flex;gap:10px;">
-                        <label><input type="radio" name="type" value="movie" checked> Movie</label>
-                        <label><input type="radio" name="type" value="tv"> TV Show</label>
-                    </div>
-                </div>
-                <div id="tmdb-suggestions" class="suggestions"></div>
+            </div>
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" id="title" name="title" required>
+                <button type="button" id="search-btn" class="btn-search" title="Search TMDB">🔍</button>
+                <input type="hidden" id="tmdb_year" name="tmdb_year" value="">
+                <input type="hidden" id="tmdb_genre" name="tmdb_genre" value="">
+            </div>
+<div id="tmdb-suggestions" class="suggestions"></div>
                 <div class="form-group">
                     <button type="submit">Add to Watchlist</button>
                     <button type="button" id="cancel-add-btn" class="btn-cancel">Cancel</button>

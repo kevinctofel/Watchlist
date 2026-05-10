@@ -139,5 +139,19 @@
     "release_date": "2023-08-22",
     "vote_average": 7.413,
     "tmdb_id": 114461
+  },
+  {
+    "id": 1778371764276,
+    "title": "Ender's Game",
+    "type": "movie",
+    "year": "2013",
+    "genre": null,
+    "addedAt": "2026-05-10T00:09:24.276Z",
+    "poster_path": "/pVcRI5YKnkkgaAD876jBeKb189d.jpg",
+    "backdrop_path": "/zWvOs6lepfOI0dPa1ANVcdbkBuY.jpg",
+    "overview": "Based on the classic novel by Orson Scott Card, Ender's Game is the story of the Earth's most gifted children training to defend their homeplanet in the space wars of the future.",
+    "release_date": "2013-10-24",
+    "vote_average": 6.588,
+    "tmdb_id": 80274
   }
 ]
