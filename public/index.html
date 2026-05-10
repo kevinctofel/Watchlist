@@ -211,18 +211,19 @@
         }
 
         /* Toggle button styles */
-        .btn-toggle {
-            background-color: #2ecc71;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9em;
-            font-weight: 600;
-            transition: background-color 0.3s;
-            margin-left: 10px;
-        }
+    .btn-toggle {
+        background-color: #2ecc71;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.9em;
+        font-weight: 600;
+        transition: background-color 0.3s;
+        margin-left: 10px;
+        z-index: 101;
+    }
 
         .btn-toggle:hover {
             background-color: #27ae60;
@@ -509,10 +510,9 @@
                 justify-content: center;
             }
         }
-            .suggestions {
-            position: absolute;
-            left: 0;
-            top: 100%;
+        .suggestions {
+            position: static;
+            margin-top: 4px;
             background: white;
             border: 1px solid #ddd;
             max-height: 200px;
@@ -521,6 +521,11 @@
             box-sizing: border-box;
             z-index: 10;
         }
+        .suggestions-group {
+            position: relative;
+            margin-bottom: 4px;
+        }
+
     </style>
 </head>
 <body>
@@ -551,29 +556,24 @@
                 <div class="form-group">
                     <label for="title">Title</label>
                     <input type="text" id="title" name="title" required>
-                <button type="button" id="search-btn" class="btn-search" title="Search TMDB">🔍</button>
-                <input type="hidden" id="tmdb_id" name="tmdb_id">
+                    <button type="button" id="search-btn" class="btn-search" title="Search TMDB">🔍</button>
+                    <input type="hidden" id="tmdb_year" name="tmdb_year" value="">
+                    <input type="hidden" id="tmdb_genre" name="tmdb_genre" value="">
                 </div>
                 <div class="form-group">
+                    <label>Type</label>
+                    <div class="radio-group" style="display:flex;gap:10px;">
+                        <label><input type="radio" name="type" value="movie" checked> Movie</label>
+                        <label><input type="radio" name="type" value="tv"> TV Show</label>
+                    </div>
+                </div>
                 <div id="tmdb-suggestions" class="suggestions"></div>
-                    <select id="type" name="type" required>
-                        <option value="movie">Movie</option>
-                        <option value="tv">TV Show</option>
-                    </select>
-                <div id="tmdb-poster-preview" class="poster-preview"></div>
-                </div>
                 <div class="form-group">
-                    <label for="year">Year</label>
-                    <input type="number" id="year" name="year" min="1800" max="2026">
+                    <button type="submit">Add to Watchlist</button>
+                    <button type="button" id="cancel-add-btn" class="btn-cancel">Cancel</button>
                 </div>
-                <div class="form-group">
-                    <label for="genre">Genre</label>
-                    <input type="text" id="genre" name="genre">
-                </div>
-                <button type="submit">Add to Watchlist</button>
-                <button type="button" id="cancel-add-btn" class="btn-cancel">Cancel</button>
             </form>
-        </div>
+
     </div>
 
     <div id="detail-view" class="detail-view"></div>
@@ -846,9 +846,9 @@
             e.preventDefault();
 
             const title = document.getElementById('title').value.trim();
-            const type = document.getElementById('type').value.trim();
-            const year = document.getElementById('year').value.trim();
-            const genre = document.getElementById('genre').value.trim();
+            const type = document.querySelector('input[name="type"]:checked').value.trim();
+            const year = null;
+            const genre = null;
 
             if (!title) {
                 showErrorNotification('Title is required');
@@ -874,6 +874,8 @@
                 const items = await loadItems(); // Reload list from API
                 displayItems(items);
                 addItemForm.reset();
+                document.getElementById('tmdb-suggestions').innerHTML = '';
+                document.getElementById('tmdb-suggestions').style.display = 'none';
                 showErrorNotification('Item added successfully!', 'success');
                 // Hide the form after successful addition
                 addFormContainer.classList.remove('visible');
@@ -898,17 +900,14 @@
 
                 const title = prompt('Enter new title:', item.title);
                 const type = prompt('Enter new type (movie/tv):', item.type);
-                const year = prompt('Enter new year:', item.year);
-                const genre = prompt('Enter new genre:', item.genre);
-
+                // TMDB data will be auto-filled for year and genre; leave them unchanged
                 if (title === null || title.trim() === '') return; // User canceled or empty
-
+ 
                 const updatedItem = {
                     ...item,
                     title: title !== null ? title.trim() : item.title,
                     type: type !== null ? type.trim() : item.type,
-                    year: year !== null ? year.trim() : item.year,
-                    genre: genre !== null ? genre.trim() : item.genre,
+                    // year and genre remain as before
                     updatedAt: new Date().toISOString()
                 };
 
@@ -991,37 +990,24 @@ const showSuggestions = results => {
   });
   suggDiv.style.display = results.length ? 'block' : 'none';
 };
-const selectTMDBResult = r => {
-  document.getElementById('title').value = r.title ?? r.name;
-  document.getElementById('tmdb_id').value = r.id;
-  document.getElementById('type').value = r.media_type;
-  document.getElementById('year').value = r.release_date?.slice(0,4) ?? r.first_air_date?.slice(0,4) ?? '';
-  document.getElementById('genre').value = r.genre_ids?.join(', ') ?? '';
-  document.getElementById('overview').value = r.overview ?? '';
-  document.getElementById('poster_path').value = r.poster_path ?? '';
-  const preview = document.getElementById('tmdb-poster-preview');
-  preview.innerHTML = r.poster_path ? `<img src="https://image.tmdb.org/t/p/w200${r.poster_path}" alt="${r.title ?? r.name} poster">` : '';
-  document.getElementById('tmdb-suggestions').style.display = 'none';
-};
-const searchDebounced = debounce(async ev => {
-  const q = ev.target.value;
-  if (q.length < 3) { document.getElementById('tmdb-suggestions').style.display = 'none'; return; }
-  const type = document.getElementById('type').value;
-  const results = await tmdbSearch(q, type);
-  showSuggestions(results);
-}, 400);
-document.getElementById('title').addEventListener('input', searchDebounced);
-document.getElementById('type').addEventListener('change', () => {
-  const ev = { target: { value: document.getElementById('title').value } };
-  searchDebounced(ev);
-});
-document.getElementById('search-btn').addEventListener('click', (e) => {
-  e.preventDefault();
-  const titleVal = document.getElementById('title').value;
-  if (!titleVal) return;
-  searchDebounced({ target: { value: titleVal } });
-});
-        toggleAddFormBtn.addEventListener('click', () => {
+    const selectTMDBResult = r => {
+        document.getElementById('title').value = r.title ?? r.name;
+        document.querySelector('input[name="type"][value="'+r.media_type+'"]').checked = true;
+        // Hide suggestions after selection
+        document.getElementById('tmdb-suggestions').style.display = 'none';
+    };
+
+    const searchDebounced = debounce(async ev => {
+        const q = ev.target.value;
+        if (q.length < 3) { document.getElementById('tmdb-suggestions').style.display = 'none'; return; }
+        const typeEl = document.querySelector('input[name="type"]:checked');
+        const type = typeEl ? typeEl.value : 'movie';
+        const results = await tmdbSearch(q, type);
+        showSuggestions(results);
+    }, 400);
+   document.getElementById('title').addEventListener('input', searchDebounced);
+    toggleAddFormBtn.addEventListener('click', () => {
+
             addFormContainer.classList.toggle('visible');
             // Focus on title input when showing the form
             if (addFormContainer.classList.contains('visible')) {

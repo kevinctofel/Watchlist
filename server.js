@@ -100,15 +100,15 @@ app.post('/api/items', async (req, res) => {
   // Fetch TMDB metadata
   const tmdbMetadata = await fetchTMDBMetadata(title, type, year);
 
-  const newItem = {
-    id: Date.now(),
-    title,
-    type,
-    year,
-    genre,
-    addedAt: new Date().toISOString(),
-    ...tmdbMetadata // Add poster_path, overview, etc. if found
-  };
+    const newItem = {
+        id: Date.now(),
+        title,
+        type,
+        year: tmdbMetadata.release_date?.slice(0,4) ?? null,
+        genre: null,
+        addedAt: new Date().toISOString(),
+        ...tmdbMetadata
+    };
 
   items.push(newItem);
   saveData(); // Persist the change

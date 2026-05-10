@@ -97,5 +97,47 @@
     "release_date": "1989-07-05",
     "vote_average": 8.259,
     "tmdb_id": 1400
+  },
+  {
+    "id": 1778371028143,
+    "title": "The Big Bang Theory",
+    "type": "tv",
+    "year": "2007",
+    "genre": null,
+    "addedAt": "2026-05-09T23:57:08.143Z",
+    "poster_path": "/an3uTx1P0XgHPylgfPV6W7yxKAo.jpg",
+    "backdrop_path": "/gMqQY6SwuhKg1LvmiTxKX6YrINr.jpg",
+    "overview": "Physicists Leonard and Sheldon find their nerd-centric social circle with pals Howard and Raj expanding when aspiring actress Penny moves in next door.",
+    "release_date": "2007-09-24",
+    "vote_average": 7.912,
+    "tmdb_id": 1418
+  },
+  {
+    "id": 1778371371334,
+    "title": "Harry Potter and the Prisoner of Azkaban",
+    "type": "movie",
+    "year": "2004",
+    "genre": null,
+    "addedAt": "2026-05-10T00:02:51.334Z",
+    "poster_path": "/aWxwnYoe8p2d2fcxOqtvAtJ72Rw.jpg",
+    "backdrop_path": "/vbk5CfaAHOjQPSAcYm6AoRRz2Af.jpg",
+    "overview": "Year three at Hogwarts means new fun and challenges as Harry learns the delicate art of approaching a Hippogriff, transforming shape-shifting Boggarts into hilarity and even turning back time. But the term also brings danger: soul-sucking Dementors hover over the school, an ally of the accursed He-Who-Cannot-Be-Named lurks within the castle walls, and fearsome wizard Sirius Black escapes Azkaban. And Harry will confront them all.",
+    "release_date": "2004-05-31",
+    "vote_average": 8.007,
+    "tmdb_id": 673
+  },
+  {
+    "id": 1778371396573,
+    "title": "Ahsoka",
+    "type": "tv",
+    "year": "2023",
+    "genre": null,
+    "addedAt": "2026-05-10T00:03:16.573Z",
+    "poster_path": "/eiJeWeCAEZAmRppnXHiTWDcCd3Q.jpg",
+    "backdrop_path": "/31GIcUUcdQPRkVtmdqgQWJMhXj1.jpg",
+    "overview": "Former Jedi Knight Ahsoka Tano investigates an emerging threat to a vulnerable galaxy.",
+    "release_date": "2023-08-22",
+    "vote_average": 7.413,
+    "tmdb_id": 114461
   }
 ]
