@@ -71,20 +71,6 @@
     "tmdb_id": 157741
   },
   {
-    "id": 1778002231544,
-    "title": "Parasite",
-    "type": "movie",
-    "year": "2019",
-    "genre": "Thriller",
-    "addedAt": "2026-05-05T17:30:31.544Z",
-    "poster_path": "/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg",
-    "backdrop_path": "/TU9NIjwzjoKPwQHoHshkFcQUCG.jpg",
-    "overview": "All unemployed, Ki-taek's family takes peculiar interest in the wealthy and glamorous Parks for their livelihood until they get entangled in an unexpected incident.",
-    "release_date": "2019-05-30",
-    "vote_average": 8.494,
-    "tmdb_id": 496243
-  },
-  {
     "id": 1778013580256,
     "title": "Seinfeld",
     "type": "tv",
@@ -113,20 +99,6 @@
     "tmdb_id": 1418
   },
   {
-    "id": 1778371371334,
-    "title": "Harry Potter and the Prisoner of Azkaban",
-    "type": "movie",
-    "year": "2004",
-    "genre": null,
-    "addedAt": "2026-05-10T00:02:51.334Z",
-    "poster_path": "/aWxwnYoe8p2d2fcxOqtvAtJ72Rw.jpg",
-    "backdrop_path": "/vbk5CfaAHOjQPSAcYm6AoRRz2Af.jpg",
-    "overview": "Year three at Hogwarts means new fun and challenges as Harry learns the delicate art of approaching a Hippogriff, transforming shape-shifting Boggarts into hilarity and even turning back time. But the term also brings danger: soul-sucking Dementors hover over the school, an ally of the accursed He-Who-Cannot-Be-Named lurks within the castle walls, and fearsome wizard Sirius Black escapes Azkaban. And Harry will confront them all.",
-    "release_date": "2004-05-31",
-    "vote_average": 8.007,
-    "tmdb_id": 673
-  },
-  {
     "id": 1778371396573,
     "title": "Ahsoka",
     "type": "tv",
@@ -153,5 +125,33 @@
     "release_date": "2013-10-24",
     "vote_average": 6.588,
     "tmdb_id": 80274
+  },
+  {
+    "id": 1778429576028,
+    "title": "Interstellar",
+    "type": "movie",
+    "year": "2014",
+    "genre": null,
+    "addedAt": "2026-05-10T16:12:56.028Z",
+    "poster_path": "/yQvGrMoipbRoddT0ZR8tPoR7NfX.jpg",
+    "backdrop_path": "/2ssWTSVklAEc98frZUQhgtGHx7s.jpg",
+    "overview": "The adventures of a group of explorers who make use of a newly discovered wormhole to surpass the limitations on human space travel and conquer the vast distances involved in an interstellar voyage.",
+    "release_date": "2014-11-05",
+    "vote_average": 8.471,
+    "tmdb_id": 157336
+  },
+  {
+    "id": 1778434698127,
+    "title": "INTERSTICE",
+    "type": "movie",
+    "year": "2022",
+    "genre": null,
+    "addedAt": "2026-05-10T17:38:18.127Z",
+    "poster_path": "/doQqQM51mezvpGF5tr6SFyoxqOr.jpg",
+    "backdrop_path": "/6Y4GfuTONKnO2e7g90G7UTnJeDE.jpg",
+    "overview": "Two years after the tragic death of Zack Lorenzo's best friend, Andrew Ridge, Zack attends a magician show. During the spectacle, Zack becomes part of the show, and the Magician conjures a tremendous shift in Zack's perspective on the horrific incident of his past.",
+    "release_date": "2022-12-16",
+    "vote_average": 0,
+    "tmdb_id": 1064497
   }
 ]

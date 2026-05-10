@@ -992,7 +992,8 @@ const showSuggestions = results => {
 };
     const selectTMDBResult = r => {
         document.getElementById('title').value = r.title ?? r.name;
-        document.querySelector('input[name="type"][value="'+r.media_type+'"]').checked = true;
+        const typeInput = document.querySelector('input[name="type"][value="'+r.media_type+'"]');
+            if (typeInput) typeInput.checked = true;
         // Hide suggestions after selection
         document.getElementById('tmdb-suggestions').style.display = 'none';
     };
